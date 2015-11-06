@@ -1,0 +1,9 @@
+To run this program have to have a JFX plugin for eclipse
+
+Run scene main that’s the name for interface in java  fx 
+
+Right click mouse to choose different options.
+
+Code is commented for understanding the code for myself and the lecturer 
+
+

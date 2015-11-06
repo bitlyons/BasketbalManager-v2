@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="489.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bmanager.controllers.MainController">
+    <children>
+        <ImageView fitHeight="124.0" fitWidth="120.0" layoutX="232.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../resources/logo.png" />
+            </image>
+        </ImageView>
+        <TableView fx:id="tablePlayers" editable="true" layoutX="11.0" layoutY="141.0" prefHeight="271.0" prefWidth="578.0">
+            <columns>
+                <TableColumn fx:id="columnId" prefWidth="73.0" sortable="false" text="Id" />
+                <TableColumn fx:id="columnFirstname" prefWidth="96.0" sortable="false" text="Firstname" />
+                <TableColumn fx:id="columnLastname" prefWidth="97.0" sortable="false" text="Lastname" />
+                <TableColumn fx:id="columnAge" prefWidth="79.0" sortable="false" text="Age" />
+                <TableColumn fx:id="columnHeight" prefWidth="61.0" sortable="false" text="Height" />
+                <TableColumn fx:id="columnType" prefWidth="87.0" sortable="false" text="Type" />
+                <TableColumn fx:id="columnTeam" prefWidth="81.0" sortable="false" text="Team" />
+            </columns>
+        </TableView>
+      <Button layoutX="239.0" layoutY="430.0" mnemonicParsing="false" onAction="#btnSave_onAction" prefHeight="35.0" prefWidth="107.0" style="-fx-background-radius: 0;" text="Save changes">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Button>
+    </children>
+</Pane>
