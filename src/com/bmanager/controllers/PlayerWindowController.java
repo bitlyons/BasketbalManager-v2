@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+
 //A multi purpose controller that can be used to edit an existing player or adding a new player
 //This controller is initialized differently to MainController.java
 //The code for loading the fxml document is placed inside the class, where in the MainController.java its not, the fxml and controller is set within the class.
@@ -309,3 +310,4 @@ public class PlayerWindowController implements Initializable {
         EDIT
     }
 }
+//todo e
