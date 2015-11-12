@@ -11,11 +11,18 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+   public void start(Stage primaryStage) throws Exception{
+        MainController app = new MainController();
+        primaryStage.setTitle("Basketball Manager");
+
+        primaryStage.setResizable(false);
+        app.startProgram(primaryStage);
+
+    }
+    /* public void start(Stage primaryStage) throws Exception {
 
         Parent root = FXMLLoader.load(getClass().getResource("/com/bmanager/views/SceneMain.fxml"));
-        primaryStage.setTitle("Basketball Manager");
-        primaryStage.setResizable(false);
+
 
         primaryStage.setScene(new Scene(root));
         primaryStage.getIcons().add(new Image("/com/bmanager/resources/logo.png"));
@@ -23,7 +30,7 @@ public class Main extends Application {
 
         primaryStage.show();
         primaryStage.toFront();
-    }
+    } */
 
     public static void main(String[] args) {
         launch(args);

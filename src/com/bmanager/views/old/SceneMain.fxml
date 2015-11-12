@@ -5,11 +5,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="489.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bmanager.controllers.MainController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="489.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bmanager.controllers.old.MainControllerOld">
     <children>
         <ImageView fitHeight="124.0" fitWidth="120.0" layoutX="232.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../resources/logo.png" />
+                <Image url="@../../resources/logo.png" />
             </image>
         </ImageView>
         <TableView fx:id="tablePlayers" editable="true" layoutX="11.0" layoutY="141.0" prefHeight="271.0" prefWidth="578.0">
