@@ -333,8 +333,8 @@ public class MainControllerOld implements Initializable {
 
             //Sets the attributes of the player to the UI elements
             txtId.setText(String.valueOf(p.getId()));
-            txtFirstname.setText(p.getFirstname());
-            txtLastname.setText(p.getLastname());
+            txtFirstname.setText(p.getFirstName());
+            txtLastname.setText(p.getLastName());
             txtAge.setText(String.valueOf(p.getAge()));
             txtHeight.setText(String.valueOf(p.getHeight()));
 
@@ -360,8 +360,8 @@ public class MainControllerOld implements Initializable {
             Player player = new Player();
 
             player.setId(Integer.parseInt(txtId.getText()));
-            player.setFirstname(txtFirstname.getText());
-            player.setLastname(txtLastname.getText());
+            player.setFirstName(txtFirstname.getText());
+            player.setLastName(txtLastname.getText());
             player.setAge(Integer.parseInt(txtAge.getText()));
             player.setHeight(Double.parseDouble(txtHeight.getText()));
             player.setPlayerType(cboPlayerType.getSelectionModel().getSelectedItem());

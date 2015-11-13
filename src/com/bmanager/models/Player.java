@@ -5,12 +5,12 @@ public class Player {
 
     //The attributes each player can have
     private int id;
-	private String firstname, lastname;
-	private int age;
-
+	private String firstName, lastName, playerType;
+	//TODO Store age as a D.O.B
+    private int age;
 	private double height;
-	private String playerType;
-	private String team;
+    //TODO change team to teamID which references A team in the team table
+    private  String team;
 
     //Empty constructor
     public Player() {
@@ -18,10 +18,10 @@ public class Player {
     }
 
     //Alternate constructor
-	public Player(int id, String firstname, String lastname, int age, double height, String playerType, String team) {
+	public Player(int id, String firstName, String lastName, int age, double height, String playerType, String team) {
 		this.id = id;
-		this.firstname = firstname;
-		this.lastname = lastname;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.age = age;
 
 		this.height = height;
@@ -37,20 +37,20 @@ public class Player {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public double getHeight() {
