@@ -1,9 +1,6 @@
 package com.bmanager.ui.newplayer;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
@@ -28,11 +25,12 @@ public class NewPlayerView extends GridPane{
     TextField textFirstName = new TextField();
     TextField textLastName = new TextField();
     TextField textDOB = new TextField();
+    DatePicker dateDOB = new DatePicker();
     TextField textHeight = new TextField();
 
     //Combo boxes
-    ComboBox comboPlayerType = new ComboBox();
-    ComboBox comboTeams = new ComboBox();
+    ComboBox<String> comboPlayerType = new ComboBox<>();
+    ComboBox<String> comboTeams = new ComboBox<>();
 
     //Buttons
     Button buttonAddPlayer = new Button("Add Player");
@@ -64,7 +62,7 @@ public class NewPlayerView extends GridPane{
 
         //Date Of Birth, add prompt text to show how to enter the dob.
         this.add(labelDOB, 1, 4);
-        this.add(textDOB, 2, 4);
+        this.add(dateDOB, 2, 4);
         textDOB.setPromptText("DD/MM/YYYY");
 
         //Height
@@ -74,12 +72,11 @@ public class NewPlayerView extends GridPane{
         //Type
         this.add(labelPlayerType, 1, 6);
         this.add(comboPlayerType, 2, 6);
-        comboPlayerType.setMaxWidth(56);
 
         //Team
         this.add(labelTeam, 1, 7);
         this.add(comboTeams, 2, 7);
-        comboTeams.setMaxWidth(56);
+
 
         //Buttons
         HBox buttons = new HBox(10, buttonAddPlayer, buttonCancel);
@@ -87,8 +84,6 @@ public class NewPlayerView extends GridPane{
         buttonAddPlayer.setPrefWidth(90);
         buttonCancel.setPrefHeight(34);
         this.add(buttons,2,8);
-
-        //Player Type
 
     }
 }

@@ -1,7 +1,5 @@
 package com.bmanager.ui.search;
 
-/**
- * Created by : Brendan Lyons (20066143)
- */
+/**Placeholder for now **/
 public class SearchController {
 }

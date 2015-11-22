@@ -1,16 +1,30 @@
 package com.bmanager.models;
 
-public class Team {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Team implements Serializable {
+	private static final long serialVersionUID = 11L;
+	
     private int teamId, teamMemberNumber;
     private String teamName, logoUrl, city;
 
     //constructor
-    public Team(int teamId, String teamName, String logoUrl, String city){
+    public Team(int teamId, String teamName,String city, String logoUrl){
         this.teamId = teamId;
-
         this.teamName = teamName;
         this.logoUrl = logoUrl;
         this.city = city;
+    }
+
+    public void calculateTeamNumbers(ArrayList<Player> playerDB){
+        //calculate team member size
+            List<Integer> numbers = new ArrayList<>();
+            playerDB.forEach(player -> {
+                if(player.getTeam() == teamId) numbers.add(0);
+            });
+            this.teamMemberNumber = numbers.size();
     }
 
     public int getTeamMemberNumber() {

@@ -1,8 +1,6 @@
-package com.bmanager.ui.viewteams;
+package com.bmanager.ui.mainwindow;
 
 import com.bmanager.models.Team;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -10,7 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public class TeamView extends Pane {
-    protected ObservableList<Team> teamDB = FXCollections.observableArrayList();
 
     //Generic logo when on the Team View
     ImageView genericLogo = new ImageView(new Image("com/bmanager/resources/logo.png"));
@@ -45,15 +42,17 @@ public class TeamView extends Pane {
     MenuItem saveLocation = new MenuItem("Set Save Location");
     MenuItem loadDatabase = new MenuItem(("Load Database"));
     MenuItem print = new MenuItem("Print current Team");
+    MenuItem about = new MenuItem("About");
 
     //Buttons
-    Button buttonTeams = new Button("View All Teams");
+    Button buttonTeams = new Button("View All Players");
     Button buttonSearch = new Button();
 
     public TeamView(){
         sceneLayout();
     }
 
+    @SuppressWarnings("unchecked")
     private void sceneLayout() {
 
         //Logo
@@ -78,12 +77,11 @@ public class TeamView extends Pane {
         columnTeamCity.setPrefWidth(170);
 
         columnTeamMemberNumbers = new TableColumn<>("Members");
-        columnTeamMemberNumbers.setCellValueFactory(new PropertyValueFactory<Team, Integer>("teamMemberNumber"));
+        columnTeamMemberNumbers.setCellValueFactory(new PropertyValueFactory<>("teamMemberNumber"));
         columnTeamMemberNumbers.setPrefWidth(78);
 
         //add all the columns to the table
         tableTeams.getColumns().addAll(columnTeamId, columnTeamName, columnTeamCity, columnTeamMemberNumbers);
-        tableTeams.setItems(teamDB);
         //locate the table
         tableTeams.relocate(11,151);
         tableTeams.prefHeight(271);
@@ -98,7 +96,7 @@ public class TeamView extends Pane {
         buttonTeams.setPrefHeight(35);
 
         //Options Button
-        optionsMenu.getItems().addAll(save,export,saveLocation, loadDatabase, print);
+        optionsMenu.getItems().addAll(save,export,saveLocation, loadDatabase, print, about);
         optionsMenu.setGraphic(viewOptions);
         viewOptions.setFitHeight(20);
         viewOptions.setFitWidth(20);
@@ -110,7 +108,7 @@ public class TeamView extends Pane {
         viewSearch.setFitHeight(20);
         viewSearch.setFitWidth(20);
         buttonSearch.relocate(0,570);
-        buttonSearch.setTooltip(new Tooltip("Search for player by name"));
+        buttonSearch.setTooltip(new Tooltip("Search"));
 
         this.getChildren().addAll(genericLogo, tableTeams, buttonTeams,optionsMenu, buttonSearch);
     }
