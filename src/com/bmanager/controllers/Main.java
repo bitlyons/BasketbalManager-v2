@@ -23,7 +23,7 @@ public class Main extends Application {
             e.consume(); //stop java from performing the default action (stop it closing the program)
             exitProgram();  //now run our code instead to handle exiting the program
         });
-    }
+    }//
 
     /** This Class gets called when the user try's to exit the program **/
     private void exitProgram() {
