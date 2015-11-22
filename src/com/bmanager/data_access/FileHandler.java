@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 
 public class FileHandler {
@@ -18,6 +19,7 @@ public class FileHandler {
      * @return An observable list array
      * @throws Exception
      */
+    //Needs to be re written
     public static ObservableList<Player> loadFromFile(File file) throws Exception {
 
         ObservableList<Player> players = FXCollections.observableArrayList();
@@ -37,7 +39,7 @@ public class FileHandler {
                     //Parses the csv file by splitting by a comma
                     String[] chunks = line.split(",");
 
-                    //Each item in the chunks array represents a certain attribute for the player
+                    //Each item in the chunks array represents a certain attribute for the viewplayers
                     int id = new Integer(chunks[0]);
                     String firstname = chunks[1];
                     String lastname = chunks[2];
@@ -45,12 +47,12 @@ public class FileHandler {
 
                     double height = new Double(chunks[4]);
                     String type = chunks[5];
-                    String team = chunks[6];
+                    int team = new Integer(chunks[3]);
 
-                    //Uses the data read to create a new instance of a player
-                    Player p = new Player(id, firstname, lastname, age, height, type, team);
+                    //Uses the data read to create a new instance of a viewplayers
+                    Player p = new Player(id, firstname, lastname, LocalDate.now(), height, type, team); //fix this
 
-                    //Adds the player to the observable list
+                    //Adds the viewplayers to the observable list
                     players.add(p);
 
                 } catch (Exception e) {
@@ -72,11 +74,11 @@ public class FileHandler {
 
         StringBuilder sb = new StringBuilder();
 
-        //For each player, create a CSV representation of the object
+        //For each viewplayers, create a CSV representation of the object
         for (Player player : players) {
             sb.append(player.getId()).append(",");
-            sb.append(player.getFirstname()).append(",");
-            sb.append(player.getLastname()).append(",");
+            sb.append(player.getFirstName()).append(",");
+            sb.append(player.getLastName()).append(",");
             sb.append(player.getAge()).append(",");
             sb.append(player.getHeight()).append(",");
             sb.append(player.getPlayerType()).append(",");

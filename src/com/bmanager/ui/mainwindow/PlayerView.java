@@ -1,24 +1,18 @@
-package com.bmanager.ui.viewplayers;
+package com.bmanager.ui.mainwindow;
 
 import com.bmanager.models.Player;
-import com.bmanager.models.Team;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
 
 /**
  * This class deals with displaying all the info in relation to the viewplayers view.
  * it utilizes PlayerController for user interactions.
  */
 public class PlayerView extends Pane {
-    ArrayList<Player> playerDB = new ArrayList<>();
-    ObservableList<Team> teamDB = FXCollections.observableArrayList();
 
     //logo
     ImageView viewLogo = new ImageView();
@@ -29,6 +23,9 @@ public class PlayerView extends Pane {
     //image for options button
     ImageView viewOptions = new ImageView("com/bmanager/resources/cog.png");
 
+    //image Search
+    ImageView viewSearch = new ImageView(new Image("com/bmanager/resources/search.png"));
+
     //image for next/previous Team
     ImageView viewNext = new ImageView("com/bmanager/resources/right.png");
     ImageView viewPrev = new ImageView("com/bmanager/resources/left.png");
@@ -37,7 +34,8 @@ public class PlayerView extends Pane {
     TableView<Player> tablePlayers = new TableView<>();
 
     //Columns for the tableView
-    TableColumn<Player, Integer> columnPlayerId, columnAge;
+    TableColumn<Player, Integer> columnPlayerId;
+    TableColumn<Player, Long> columnAge;
     TableColumn<Player, String> columnFirstName, columnLastName, columnType, columnTeam;
     TableColumn<Player, Double> columnHeight;
 
@@ -56,6 +54,7 @@ public class PlayerView extends Pane {
     MenuItem saveLocation = new MenuItem("Set Save Location");
     MenuItem loadDatabase = new MenuItem(("Load Database"));
     MenuItem print = new MenuItem("Print current Team");
+    MenuItem about = new MenuItem("About");
 
     //Buttons
     Button buttonReturn = new Button("Return to Teams");
@@ -63,8 +62,6 @@ public class PlayerView extends Pane {
     Button buttonPrev = new Button();
     Button buttonSearch = new Button();
 
-    //SearchField
-    TextField textSearch = new TextField();
 
     //constructor
     public PlayerView(){
@@ -73,6 +70,7 @@ public class PlayerView extends Pane {
     }
 
     /** this method creates the layout used by the scene*/
+    @SuppressWarnings("unchecked")
     private void sceneLayout() {
 
         //add logo and resize
@@ -118,7 +116,6 @@ public class PlayerView extends Pane {
         tablePlayers.getColumns().addAll(columnPlayerId,columnFirstName,columnLastName, columnAge,
                 columnHeight, columnType);
 
-
         //locate the table
         tablePlayers.relocate(11,151);
         tablePlayers.prefHeight(271);
@@ -133,7 +130,7 @@ public class PlayerView extends Pane {
         buttonReturn.setPrefHeight(35);
 
         //options
-        optionsMenu.getItems().addAll(save,export,saveLocation, loadDatabase, print);
+        optionsMenu.getItems().addAll(save,export,saveLocation, loadDatabase, print, about);
         optionsMenu.setGraphic(viewOptions);
         viewOptions.setFitHeight(20);
         viewOptions.setFitWidth(20);
@@ -152,13 +149,20 @@ public class PlayerView extends Pane {
         viewNext.setFitWidth(40);
         viewNext.setFitHeight(40);
 
-        this.getChildren().addAll(viewLogo, tablePlayers, buttonReturn, optionsMenu, buttonPrev, buttonNext);
+        //Search Button
+        buttonSearch.setGraphic(viewSearch);
+        viewSearch.setFitHeight(20);
+        viewSearch.setFitWidth(20);
+        buttonSearch.relocate(0,570);
+        buttonSearch.setTooltip(new Tooltip("Search"));
+
+        this.getChildren().addAll(viewLogo, tablePlayers, buttonReturn, optionsMenu, buttonPrev, buttonNext, buttonSearch);
     }
-/* not using this atm
-    protected void allPlayers(){
+/** not working as intended yet
+    protected void showTeams(){
         //Team column
         columnTeam = new TableColumn<>("Team");
-        columnTeam.setCellValueFactory(new PropertyValueFactory<>("team")); // possibly need to rewite this
+        columnTeam.setCellValueFactory(new PropertyValueFactory<>("team"));
         columnTeam.setPrefWidth(81);
 
         //resize other columns to adjust for this column
@@ -169,5 +173,15 @@ public class PlayerView extends Pane {
         columnType.setPrefWidth(87);
 
         tablePlayers.getColumns().add(columnTeam);
-    } */
+    } **/
+/**  not working as intended yet
+    protected  void filteredTeam(){
+       //reset to default
+        tablePlayers.getColumns().remove(columnTeam);
+        columnFirstName.setPrefWidth(127);
+        columnLastName.setPrefWidth(127);
+        columnAge.setPrefWidth(70);
+        columnHeight.setPrefWidth(79);
+        columnType.setPrefWidth(105);
+    } **/
 }
