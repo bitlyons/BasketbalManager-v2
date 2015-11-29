@@ -1,6 +1,7 @@
 package com.bmanager.ui.mainwindow;
 
 import com.bmanager.models.Team;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;

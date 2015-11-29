@@ -7,6 +7,7 @@ import com.bmanager.models.Player;
 import com.bmanager.models.Team;
 import com.bmanager.ui.newplayer.NewPlayerController;
 import com.bmanager.ui.newteam.NewTeamController;
+import com.bmanager.ui.search.SearchController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -146,6 +147,9 @@ public class MainWindowController {
 
         //Button to go to the next team
         playerView.buttonPrev.setOnAction(e ->prevTeamId());
+
+        teamView.buttonSearch.setOnAction(e->search());
+        playerView.buttonSearch.setOnAction(e->search());
 
     }
 
@@ -406,5 +410,10 @@ public class MainWindowController {
         teamView.tableTeams.getColumns().remove(teamView.columnTeamMemberNumbers);
         teamView.tableTeams.getColumns().add(teamView.columnTeamMemberNumbers);
 
+    }
+
+    private void search(){
+        SearchController search = new SearchController();
+        search.window.showAndWait();
     }
 }
