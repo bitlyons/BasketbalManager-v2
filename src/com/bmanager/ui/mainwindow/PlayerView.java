@@ -47,6 +47,7 @@ public class PlayerView extends Pane {
     MenuItem itemEditPlayer = new MenuItem("Edit Player");
     MenuItem itemDeletePlayer = new MenuItem("Delete Player");
 
+
     //options menu
     MenuButton optionsMenu = new MenuButton();
     MenuItem save = new MenuItem("Save");
@@ -55,6 +56,11 @@ public class PlayerView extends Pane {
     MenuItem loadDatabase = new MenuItem(("Load Database"));
     MenuItem print = new MenuItem("Print current Team");
     MenuItem about = new MenuItem("About");
+    Menu menuTheme = new Menu("Theme");
+
+    //css radio buttons
+    RadioMenuItem radioCssLight = new RadioMenuItem("Light Theme");
+    RadioMenuItem radioCssDark = new RadioMenuItem("Dark Theme");
 
     //Buttons
     Button buttonReturn = new Button("Return to Teams");
@@ -129,8 +135,11 @@ public class PlayerView extends Pane {
         buttonReturn.setPrefWidth(107);
         buttonReturn.setPrefHeight(35);
 
+        //Css menu
+        menuTheme.getItems().addAll(radioCssLight, radioCssDark);
+
         //options
-        optionsMenu.getItems().addAll(save,export,saveLocation, loadDatabase, print, about);
+        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation, export, menuTheme, print, about);
         optionsMenu.setGraphic(viewOptions);
         viewOptions.setFitHeight(20);
         viewOptions.setFitWidth(20);
