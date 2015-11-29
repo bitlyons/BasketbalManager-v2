@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Scene;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.stage.DirectoryChooser;
@@ -191,6 +192,21 @@ public class MainWindowController {
 
         playerView.about.setOnAction(e->about());
         teamView.about.setOnAction(e->about());
+
+        ToggleGroup toggleCss = new ToggleGroup();
+
+        playerView.radioCssLight.setOnAction(e->{});
+        teamView.radioCssLight.setOnAction(e->{});
+
+        playerView.radioCssDark.setOnAction(e->{});
+        teamView.radioCssDark.setOnAction(e->{});
+
+        playerView.radioCssLight.setToggleGroup(toggleCss);
+        playerView.radioCssDark.setToggleGroup(toggleCss);
+
+        teamView.radioCssLight.setToggleGroup(toggleCss);
+        teamView.radioCssDark.setToggleGroup(toggleCss);
+
     }
 
 

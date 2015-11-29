@@ -37,12 +37,18 @@ public class TeamView extends Pane {
     //options menu
     MenuButton optionsMenu = new MenuButton();
 
-    MenuItem save = new MenuItem("Save");
+    MenuItem save = new MenuItem("Save Database");
+    MenuItem loadDatabase = new MenuItem(("Load Database ..."));
     MenuItem export = new MenuItem("Export To HTML");
     MenuItem saveLocation = new MenuItem("Set Save Location");
-    MenuItem loadDatabase = new MenuItem(("Load Database"));
+
     MenuItem print = new MenuItem("Print current Team");
     MenuItem about = new MenuItem("About");
+    Menu menuTheme = new Menu("Theme");
+
+    //css radio buttons
+    RadioMenuItem radioCssLight = new RadioMenuItem("Light Theme");
+    RadioMenuItem radioCssDark = new RadioMenuItem("Dark Theme");
 
     //Buttons
     Button buttonTeams = new Button("View All Players");
@@ -95,13 +101,18 @@ public class TeamView extends Pane {
         buttonTeams.setPrefWidth(107);
         buttonTeams.setPrefHeight(35);
 
+        //Css menu
+        menuTheme.getItems().addAll(radioCssLight, radioCssDark);
+
         //Options Button
-        optionsMenu.getItems().addAll(save,export,saveLocation, loadDatabase, print, about);
+        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation, export, menuTheme, print, about);
         optionsMenu.setGraphic(viewOptions);
         viewOptions.setFitHeight(20);
         viewOptions.setFitWidth(20);
         optionsMenu.relocate(555,570);
         optionsMenu.setTooltip(new Tooltip("Settings Menu"));
+
+
 
         //Search Button
         buttonSearch.setGraphic(viewSearch);
