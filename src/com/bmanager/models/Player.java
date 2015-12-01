@@ -20,7 +20,6 @@ public class Player implements Serializable{
 
     }
 
-
     //Alternate constructor
 	public Player(int id, String firstName, String lastName, LocalDate dob, double height, String playerType, int team) {
 		this.id = id;
@@ -39,7 +38,6 @@ public class Player implements Serializable{
     public void generateAge(){
         Period age = Period.between(dob,LocalDate.now());
         this.age = age.getYears();
-
     }
 
     public int getId() {

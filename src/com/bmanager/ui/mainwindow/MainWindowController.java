@@ -1,7 +1,7 @@
 package com.bmanager.ui.mainwindow;
 
 
-import com.bmanager.data_access.SaveData;
+import com.bmanager.data_access.FileHandling;
 import com.bmanager.misc.AlertBox;
 import com.bmanager.models.Player;
 import com.bmanager.models.Team;
@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainWindowController {
@@ -122,7 +123,9 @@ public class MainWindowController {
                 teamView.contextMenu.show(teamView.tableTeams, e.getScreenX(), e.getScreenY());
             else
                 teamView.contextMenu.hide();
-        });
+            //double click open team... putting this here since we already have a listener
+            if(e.getClickCount() == 2) viewTeam();
+            });
 
         //PlayerView Context Menu
         playerView.itemAddPlayer.setOnAction(e -> addNewX());
@@ -349,13 +352,33 @@ public class MainWindowController {
     }
 
     /** options menu methods**/
-        private void saveData(){
-            SaveData.save(teamDB, playerDB, saveLocation);
+    private void saveData(){
+            FileHandling.save(teamDB, playerDB, saveLocation);
         }
-        private void exportToHTML(){
 
+
+    private void exportToHTML(){
+        List<Player> players = filteredPlayers;
+        DirectoryChooser outputLocation = new DirectoryChooser();
+        outputLocation.setInitialDirectory(new File("./"));
+        outputLocation.setTitle("Choose Output Location");
+        String location = outputLocation.showDialog(window).toString() + "/players.HTML";
+
+
+            try{
+
+                Boolean saved = FileHandling.outputToHtml(players , location);
+                System.out.println(location);
+                if (saved == false) throw new IOException();
+            }
+            catch (IOException e){
+                AlertBox.show("ERROR" , "Error" , "File Not Saved!");
+            }
         }
-        private void setSaveLocation(){
+
+
+
+    private void setSaveLocation(){
             DirectoryChooser databaseDir = new DirectoryChooser();
             databaseDir.setTitle("Pick Location To Save The Database");
             checkIfDefaultFolderExists();
@@ -366,8 +389,8 @@ public class MainWindowController {
             } catch (Exception e){
                 //Nothing we don't save the location if user exits
             }
-        }
-        private void loadDatabase(){
+     }
+    private void loadDatabase(){
             FileChooser databasePicker = new FileChooser();
             databasePicker.setTitle("Load Database");
 
@@ -378,9 +401,9 @@ public class MainWindowController {
 
             try {
                  File loadLocation = databasePicker.showOpenDialog(window);
-                SaveData.loadData(loadLocation.toString());
-                this.teamDB = SaveData.teams();
-                this.playerDB = SaveData.players();
+                FileHandling.loadData(loadLocation.toString());
+                this.teamDB = FileHandling.teams();
+                this.playerDB = FileHandling.players();
                 observableTeam = FXCollections.observableList(teamDB);
                 observablePlayers = FXCollections.observableList(playerDB);
                 filteredPlayers = new FilteredList<>(observablePlayers,  p -> true);
@@ -419,6 +442,8 @@ public class MainWindowController {
         }
         return -1;
     }
+
+
 
     private void generateTeamNumbers(){
         teamDB.forEach(p-> p.calculateTeamNumbers(playerDB));

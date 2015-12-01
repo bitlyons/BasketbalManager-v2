@@ -4,17 +4,19 @@ package com.bmanager.data_access;
 import com.bmanager.models.Player;
 import com.bmanager.models.Team;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 /** This is a Temp class to test saving and loading the program.
  *  methods here should be moved to FileHandling**/
-public class SaveData {
+public class FileHandling {
 
     static ArrayList<Team> teamDB;
     static ArrayList<Player> playerDB;
 
-
-    public SaveData(){
+    public FileHandling(){
     }
 
     //save the ArrayLists
@@ -68,5 +70,35 @@ public class SaveData {
     public static  ArrayList<Player> players(){
         return playerDB;
     }
+
+
+    //This method works by taking in a list, then building a string from each of the players in that list with html
+    //tags between each item to output it to a table.
+    public static boolean outputToHtml(List<Player> players, String saveLocation){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<html><body>These Players were outputed from BasketBall Manager<br><table border=\"1\" style=\"width:100%\">");
+        sb.append("<tr><th>Player Id</th><th>Name</th><th> Age</th> <th>Height</th><th>Type</th></tr>");
+        for (Player player : players) {
+            sb.append("<TR><TD>");
+            sb.append(player.getId()).append("</td>");
+            sb.append("<td>" + player.getFirstName() + " " + player.getLastName()).append("</td>");
+            sb.append("<td>" + player.getAge()).append("</td>");
+            sb.append("<td>" + player.getHeight()).append("</td>");
+            sb.append("<td>" + player.getPlayerType()).append("</td>");
+            sb.append("</TR>");
+            sb.append(System.lineSeparator());
+        }
+        sb.append("</table></body></html>");
+        try {
+            Files.write(Paths.get(saveLocation), sb.toString().getBytes());
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+
+
 
 }
