@@ -105,7 +105,7 @@ public class TeamView extends Pane {
         menuTheme.getItems().addAll(radioCssLight, radioCssDark);
 
         //Options Button
-        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation,  menuTheme, print, about);
+        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation, about); //menuTheme, print,
         optionsMenu.setGraphic(viewOptions);
         viewOptions.setFitHeight(20);
         viewOptions.setFitWidth(20);

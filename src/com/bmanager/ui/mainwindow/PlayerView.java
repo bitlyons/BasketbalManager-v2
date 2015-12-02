@@ -139,7 +139,7 @@ public class PlayerView extends Pane {
         menuTheme.getItems().addAll(radioCssLight, radioCssDark);
 
         //options
-        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation, export, menuTheme, print, about);
+        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation, export, about);// menuTheme, print,
         optionsMenu.setGraphic(viewOptions);
         viewOptions.setFitHeight(20);
         viewOptions.setFitWidth(20);
