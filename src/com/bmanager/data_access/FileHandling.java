@@ -100,5 +100,49 @@ public class FileHandling {
     }
 
 
+    /**
+     * Reads a file  and creates a list that will be used to save the settings
+     * @throws Exception
+     */
+    public static List<String> loadSettings() throws Exception {
+
+        File file = new File("./config/settings.ini");
+
+        //Checks if the file exists first
+        if (! file.exists()) {
+            return null;
+        } else {
+            List<String> settings = new ArrayList<>();
+            List<String> lines = Files.readAllLines(file.toPath());
+
+            //Loops through each line in the file that was read
+            for (String line : lines) {
+
+                try {
+
+                    //Parses the file by splitting by a comma
+                    String[] chunks = line.split(",");
+
+                    //add each line to the list
+                    String readIn = chunks[0];
+                    settings.add(readIn);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return settings;
+        }
+    }
+
+
+    /** this saves the settings **/
+    public static void saveSettings(String saveLoacation, String cssTheme) throws IOException {
+        String output = saveLoacation + "," + cssTheme + ",";
+
+        //Saves the content of the string builder to a file
+        Files.write(Paths.get("./config/settings.ini"), output.getBytes());
+    }
 
 }

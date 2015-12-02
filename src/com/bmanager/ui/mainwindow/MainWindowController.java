@@ -1,6 +1,7 @@
 package com.bmanager.ui.mainwindow;
 
 
+import com.bmanager.controllers.Main;
 import com.bmanager.data_access.FileHandling;
 import com.bmanager.misc.AlertBox;
 import com.bmanager.models.Player;
@@ -11,67 +12,78 @@ import com.bmanager.ui.search.SearchController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.geometry.Pos;
+import javafx.print.PrinterJob;
 import javafx.scene.Scene;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static com.bmanager.data_access.FileHandling.loadSettings;
 
 
 public class MainWindowController {
 
+    //boolean to know which view is active, if its true team view is active, false and player view is active.
+    boolean teamViewActive;
     // ArrayLists to store teams and players
     private ArrayList<Team> teamDB = new ArrayList<>();
     private ArrayList<Player> playerDB = new ArrayList<>();
-
     // Observable Lists that will be used for the tableViews backed by the arrayLists above
     private ObservableList<Team> observableTeam = FXCollections.observableList(teamDB);
     private ObservableList<Player> observablePlayers = FXCollections.observableList(playerDB);
-
     //filtered list for player view
     private FilteredList<Player> filteredPlayers = new FilteredList<>(observablePlayers, p -> true);
-
     // These objects will be used to store the current selected player or team for editing
     private Team selectedTeam;
     private Player selectedPlayer;
-
     // These will be used to store the layout of both views
     private TeamView teamView = new TeamView();
     private PlayerView playerView = new PlayerView();
-
     // store the index of selected team and player, default to -999 till we select something
     private int teamIndex = -999, playerIndex = -999, currentTeamId;
-    private String saveLocation = "./database/database.dat";
-
-    //boolean to know which view is active, if its true team view is active, false and player view is active.
-    boolean teamViewActive;
-
+    private String saveLocation;
     //Main Stage
     private Stage window;
 
     //Scenes for the main Stage
     private Scene teamScene = new Scene(teamView);
     private Scene playerScene = new Scene(playerView);
+    private Main parent;
 
 
     /**
      * constructor , when its first called it will setup the window to show team
      **/
-    public MainWindowController(Stage window) {
+    public MainWindowController(Stage window, Main parent) {
         this.window = window;
+        this.parent = parent;
         displayTeam();
+        initialLoad();
 
         //listeners
         initializeWatchers();
         contextMenu();
         initializeButtons();
         initializeOptions();
+
+        //stop the window from being able to close, then run our own code that asks the user what they want to do.
+        window.setOnCloseRequest(e -> {
+            e.consume(); //stop java from performing the default action (stop it closing the program)
+            exitProgram();  //now run our code instead to handle exiting the program
+        });
     }
 
 
@@ -79,7 +91,7 @@ public class MainWindowController {
      * this method is used to switch the view to the team view
      **/
     private void displayTeam() {
-       // teamDB.forEach(p -> p.calculateTeamNumbers(playerDB));
+        // teamDB.forEach(p -> p.calculateTeamNumbers(playerDB));
         teamViewActive = true;
         window.setScene(teamScene);
         teamView.tableTeams.setItems(observableTeam);
@@ -124,8 +136,8 @@ public class MainWindowController {
             else
                 teamView.contextMenu.hide();
             //double click open team... putting this here since we already have a listener
-            if(e.getClickCount() == 2) viewTeam();
-            });
+            if (e.getClickCount() == 2) viewTeam();
+        });
 
         //PlayerView Context Menu
         playerView.itemAddPlayer.setOnAction(e -> addNewX());
@@ -141,19 +153,19 @@ public class MainWindowController {
     }
 
     private void initializeButtons() {
-        teamView.buttonTeams.setOnAction(e ->displayPlayer());
+        teamView.buttonTeams.setOnAction(e -> displayPlayer());
 
         //Button that returns to the Team View
-        playerView.buttonReturn.setOnAction(e ->displayTeam());
+        playerView.buttonReturn.setOnAction(e -> displayTeam());
 
         //Button to go to the next team
-        playerView.buttonNext.setOnAction(e ->nextTeamId());
+        playerView.buttonNext.setOnAction(e -> nextTeamId());
 
         //Button to go to the next team
-        playerView.buttonPrev.setOnAction(e ->prevTeamId());
+        playerView.buttonPrev.setOnAction(e -> prevTeamId());
 
-        teamView.buttonSearch.setOnAction(e->search());
-        playerView.buttonSearch.setOnAction(e->search());
+        teamView.buttonSearch.setOnAction(e -> search());
+        playerView.buttonSearch.setOnAction(e -> search());
 
     }
 
@@ -174,39 +186,44 @@ public class MainWindowController {
         });
     }
 
-    /** controls the options menu **/
-    private void initializeOptions(){
+    /**
+     * controls the options menu
+     **/
+    private void initializeOptions() {
         //save option
-        playerView.save.setOnAction(e->saveData());
-        teamView.save.setOnAction(e->saveData());
+        playerView.save.setOnAction(e -> saveData());
+        teamView.save.setOnAction(e -> saveData());
 
         //exports current team to html
-        playerView.export.setOnAction(e->exportToHTML());
-        teamView.export.setOnAction(e->exportToHTML());
+        playerView.export.setOnAction(e -> exportToHTML());
 
         //pick save location
-        playerView.saveLocation.setOnAction(e->setSaveLocation());
-        teamView.saveLocation.setOnAction(e->setSaveLocation());
+        playerView.saveLocation.setOnAction(e -> setSaveLocation());
+        teamView.saveLocation.setOnAction(e -> setSaveLocation());
 
 
         //load database
-        playerView.loadDatabase.setOnAction(e->loadDatabase());
-        teamView.loadDatabase.setOnAction(e->loadDatabase());
+        playerView.loadDatabase.setOnAction(e -> loadDatabase());
+        teamView.loadDatabase.setOnAction(e -> loadDatabase());
 
 
-        playerView.print.setOnAction(e->print());
-        teamView.print.setOnAction(e->print());
+        playerView.print.setOnAction(e -> print());
+        teamView.print.setOnAction(e -> print());
 
-        playerView.about.setOnAction(e->about());
-        teamView.about.setOnAction(e->about());
+        playerView.about.setOnAction(e -> about());
+        teamView.about.setOnAction(e -> about());
 
         ToggleGroup toggleCss = new ToggleGroup();
 
-        playerView.radioCssLight.setOnAction(e->{});
-        teamView.radioCssLight.setOnAction(e->{});
+        playerView.radioCssLight.setOnAction(e -> {
+        });
+        teamView.radioCssLight.setOnAction(e -> {
+        });
 
-        playerView.radioCssDark.setOnAction(e->{});
-        teamView.radioCssDark.setOnAction(e->{});
+        playerView.radioCssDark.setOnAction(e -> {
+        });
+        teamView.radioCssDark.setOnAction(e -> {
+        });
 
         playerView.radioCssLight.setToggleGroup(toggleCss);
         playerView.radioCssDark.setToggleGroup(toggleCss);
@@ -217,18 +234,25 @@ public class MainWindowController {
     }
 
 
-
     /**Context Menu Methods **/
 
-    /**show only the clicked Team **/
+    /**
+     * show only the clicked Team
+     **/
     private void viewTeam() {
-        displayPlayer();
-        currentTeamId = teamDB.get(teamIndex).getTeamId();
-        filteredPlayers.setPredicate(player -> player.getTeam() == teamIndex);
-        changeTeam();
+        if (teamIndex == -999) {
+            AlertBox.show("Error", "You have not Selected a team to view", "Nothing to View");
+        } else {
+            displayPlayer();
+            currentTeamId = teamDB.get(teamIndex).getTeamId();
+            filteredPlayers.setPredicate(player -> player.getTeam() == teamIndex);
+            changeTeam();
+        }
     }
 
-    /** This method calls the new team and new Player window **/
+    /**
+     * This method calls the new team and new Player window
+     **/
 
     private void addNewX() {
         //add new team
@@ -236,7 +260,7 @@ public class MainWindowController {
             NewTeamController newTeam = new NewTeamController(teamDB);
             //Show the window then wait before we try and add the returned team
             newTeam.window.showAndWait();
-            if(!newTeam.userExited()) observableTeam.add(newTeam.getTeam());
+            if (!newTeam.userExited()) observableTeam.add(newTeam.getTeam());
         }
 
         //add new player
@@ -245,7 +269,7 @@ public class MainWindowController {
                 if (teamDB.size() == 0) throw new Exception("No teams in database");
                 NewPlayerController newPlayer = new NewPlayerController(teamDB, playerDB);
                 newPlayer.window.showAndWait();
-                if(!newPlayer.userExited()){
+                if (!newPlayer.userExited()) {
                     observablePlayers.add(newPlayer.getPlayer());
                     filteredPlayers.setPredicate(player -> true); //(return to all players)
                 }
@@ -259,7 +283,7 @@ public class MainWindowController {
      * this method  sends the selected team or player to the new team/Player window for editing
      **/
     private void editSelectedX() {
-       //Edit team
+        //Edit team
         if (teamViewActive) {
             if (teamIndex == -999) {
                 AlertBox.show("Error", "You have not Selected a team to edit", "Nothing to edit");
@@ -267,7 +291,7 @@ public class MainWindowController {
                 NewTeamController editTeam = new NewTeamController(teamDB);
                 editTeam.editTeam(selectedTeam);
                 editTeam.window.showAndWait();
-                if(!editTeam.userExited())observableTeam.set(teamIndex, editTeam.getTeam());
+                if (!editTeam.userExited()) observableTeam.set(teamIndex, editTeam.getTeam());
             }
             //edit player
         } else {
@@ -277,7 +301,8 @@ public class MainWindowController {
                 NewPlayerController editPlayer = new NewPlayerController(teamDB, playerDB);
                 editPlayer.editPlayer(selectedPlayer);
                 editPlayer.window.showAndWait();
-                if(!editPlayer.userExited())observablePlayers.set(getPlayerIndex(selectedPlayer.getId()),editPlayer.getPlayer());
+                if (!editPlayer.userExited())
+                    observablePlayers.set(getPlayerIndex(selectedPlayer.getId()), editPlayer.getPlayer());
             }
         }
     }
@@ -340,102 +365,100 @@ public class MainWindowController {
         // it give a Exception in thread "JavaFX Application Thread" java.lang.IllegalArgumentException: Invalid URL
 
         String logoURL = teamDB.get(teamIndex).getLogoUrl();
-        try{
+        try {
             playerView.viewLogo.setImage(new Image(logoURL)); //should still work for web urls
-        }
-        catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             playerView.viewLogo.setImage(new Image(new File(logoURL).toURI().toString())); //should work for local urls
         }
-            if(logoURL.equalsIgnoreCase(""))playerView.viewLogo.setImage(playerView.imageLogo);
+        if (logoURL.equalsIgnoreCase("")) playerView.viewLogo.setImage(playerView.imageLogo);
         playerView.tablePlayers.setItems(filteredPlayers);//used to refresh the table view
 
     }
 
-    /** options menu methods**/
-    private void saveData(){
-            FileHandling.save(teamDB, playerDB, saveLocation);
-        }
+    /**
+     * options menu methods
+     **/
+    private void saveData() {
+        FileHandling.save(teamDB, playerDB, saveLocation);
+    }
 
 
-    private void exportToHTML(){
+    private void exportToHTML() {
         List<Player> players = filteredPlayers;
         DirectoryChooser outputLocation = new DirectoryChooser();
         outputLocation.setInitialDirectory(new File("./"));
         outputLocation.setTitle("Choose Output Location");
         String location = outputLocation.showDialog(window).toString() + "/players.HTML";
 
+        try {
+            Boolean saved = FileHandling.outputToHtml(players, location);
+            System.out.println(location);
+            if (saved == false) throw new IOException();
+        } catch (IOException e) {
+            AlertBox.show("ERROR", "Error", "File Not Saved!");
+        }
+    }
 
-            try{
 
-                Boolean saved = FileHandling.outputToHtml(players , location);
-                System.out.println(location);
-                if (saved == false) throw new IOException();
-            }
-            catch (IOException e){
-                AlertBox.show("ERROR" , "Error" , "File Not Saved!");
-            }
+    private void setSaveLocation() {
+        DirectoryChooser databaseDir = new DirectoryChooser();
+        databaseDir.setTitle("Pick Location To Save The Database");
+        checkIfDefaultFolderExists();
+        databaseDir.setInitialDirectory(new File("./database/"));
+        try {
+            saveLocation = databaseDir.showDialog(window).toString() + "/database.dat";
+        } catch (Exception e) {
+            //Nothing we don't save the location if user exits
+        }
+    }
+
+    private void loadDatabase() {
+        FileChooser databasePicker = new FileChooser();
+        databasePicker.setTitle("Load Database");
+
+        FileChooser.ExtensionFilter filterPNG = new FileChooser.ExtensionFilter("Database file (dat", "*.DAT", "*.dat");
+        databasePicker.getExtensionFilters().add(filterPNG);
+        checkIfDefaultFolderExists();
+        databasePicker.setInitialDirectory(new File("./database/"));
+
+        try {
+            File loadLocation = databasePicker.showOpenDialog(window);
+            FileHandling.loadData(loadLocation.toString());
+            this.teamDB = FileHandling.teams();
+            this.playerDB = FileHandling.players();
+            observableTeam = FXCollections.observableList(teamDB);
+            observablePlayers = FXCollections.observableList(playerDB);
+            filteredPlayers = new FilteredList<>(observablePlayers, p -> true);
+            displayTeam();
+        } catch (Exception e) {
+            //TODO alert user load failed possibly
         }
 
+    }
+
+    private void print() {
+        PrinterJob printerJob = PrinterJob.createPrinterJob();
+        if (printerJob.showPrintDialog(window.getOwner()) && printerJob.printPage(playerView.tablePlayers)) ;
+        printerJob.endJob();
+    }
 
 
-    private void setSaveLocation(){
-            DirectoryChooser databaseDir = new DirectoryChooser();
-            databaseDir.setTitle("Pick Location To Save The Database");
-            checkIfDefaultFolderExists();
-            databaseDir.setInitialDirectory(new File("./database/"));
-            databaseDir.showDialog(window);
-            try {
-                saveLocation = databaseDir.toString() + "database.dat";
-            } catch (Exception e){
-                //Nothing we don't save the location if user exits
-            }
-     }
-    private void loadDatabase(){
-            FileChooser databasePicker = new FileChooser();
-            databasePicker.setTitle("Load Database");
-
-            FileChooser.ExtensionFilter filterPNG = new FileChooser.ExtensionFilter("Database file (dat", "*.DAT", "*.dat");
-            databasePicker.getExtensionFilters().add(filterPNG);
-            checkIfDefaultFolderExists();
-            databasePicker.setInitialDirectory(new File("./database/"));
-
-            try {
-                 File loadLocation = databasePicker.showOpenDialog(window);
-                FileHandling.loadData(loadLocation.toString());
-                this.teamDB = FileHandling.teams();
-                this.playerDB = FileHandling.players();
-                observableTeam = FXCollections.observableList(teamDB);
-                observablePlayers = FXCollections.observableList(playerDB);
-                filteredPlayers = new FilteredList<>(observablePlayers,  p -> true);
-                displayTeam();
-            } catch (Exception e){
-                //TODO alert user load failed possibly
-            }
-
-        }
-        private void print(){
-
-        }
-        private void about(){
-
-        }
-
-
-    private void checkIfDefaultFolderExists(){
+    private void checkIfDefaultFolderExists() {
         File theDir = new File("./database/");
-        if (!theDir.exists()){
+        if (!theDir.exists()) {
             try {
                 boolean created = theDir.mkdir();
                 if (!created) throw new IOException();
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 System.out.println("Failed to create dir");
             }
         }
     }
 
-    /** This method is a workaround to getting the player id when using a filtered list **/
-    private int getPlayerIndex(int playerID){
+    /**
+     * This method is a workaround to getting the player id when using a filtered list
+     **/
+    private int getPlayerIndex(int playerID) {
         for (int i = 0; i < playerDB.size(); i++) {
 
             if (playerDB.get(i).getId() == playerID) return i;
@@ -444,17 +467,141 @@ public class MainWindowController {
     }
 
 
-
-    private void generateTeamNumbers(){
-        teamDB.forEach(p-> p.calculateTeamNumbers(playerDB));
+    private void generateTeamNumbers() {
+        teamDB.forEach(p -> p.calculateTeamNumbers(playerDB));
         //force table to notice when there is a change to team numbers by removing then re adding the column
         teamView.tableTeams.getColumns().remove(teamView.columnTeamMemberNumbers);
         teamView.tableTeams.getColumns().add(teamView.columnTeamMemberNumbers);
 
     }
 
-    private void search(){
+    private void search() {
+        displayPlayer();
         SearchController search = new SearchController();
         search.window.showAndWait();
+        if (!search.exited()) {
+            String searchOption = search.getSearchOption();
+            String searchValue = search.getSearchValue();
+
+            switch (searchOption){
+                case "First Name":
+                    filteredPlayers.setPredicate(p-> p.getFirstName().toLowerCase().contains(searchValue));
+                    break;
+                case "Last Name" :
+                    filteredPlayers.setPredicate(p-> p.getLastName().toLowerCase().contains(searchValue));
+                    break;
+                case "Age":
+                    filteredPlayers.setPredicate(p-> p.getAge() == Long.parseLong(searchValue));
+                    break;
+                case "Height":
+                    filteredPlayers.setPredicate(p-> p.getHeight() == Double.parseDouble(searchValue));
+                    break;
+            }
+
+
+        } else {
+            filteredPlayers.setPredicate(p -> true);
+        }
+        playerView.tablePlayers.setItems(filteredPlayers);
+
     }
+
+
+    /**
+     * This Class gets called when the user try's to exit the program
+     **/
+    private void exitProgram() {
+        Alert closeWindow = new Alert(Alert.AlertType.CONFIRMATION);
+        closeWindow.setTitle("Exiting BasketBall Manager");
+        closeWindow.setHeaderText("It looks like you are trying to exit the program\nwould you like to save the database?");
+        closeWindow.setContentText("Save will save the database, Discard will discard all changes");
+
+        ButtonType buttonYes = new ButtonType("Save and Exit");
+        ButtonType buttonNo = new ButtonType("Discard And Exit");
+        ButtonType buttonCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        closeWindow.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
+
+        Optional<ButtonType> result = closeWindow.showAndWait();
+        if (result.get() == buttonYes) {
+            try {
+                FileHandling.saveSettings(saveLocation, "emptyfornow");
+            } catch (Exception e) {
+                AlertBox.show("Unable to save", "Error", "Unable to save the settings file");
+            }
+            saveData();
+            window.close();
+        } else if (result.get() == buttonNo) {
+            window.close();
+        }
+    }
+
+    private void initialLoad() {
+        //load settings first
+        try {
+            List<String> settings = loadSettings();
+            if (settings != null) this.saveLocation = settings.get(0);
+            else saveLocation = "./database/database.dat";
+            //todo write css switch
+
+        } catch (Exception e) {
+            AlertBox.show("Error", "Error", "Unable to load settings");
+            System.err.print(e);
+        }
+
+        try {
+            FileHandling.loadData(saveLocation);
+            this.teamDB = FileHandling.teams();
+            this.playerDB = FileHandling.players();
+            observableTeam = FXCollections.observableList(teamDB);
+            observablePlayers = FXCollections.observableList(playerDB);
+            filteredPlayers = new FilteredList<>(observablePlayers, p -> true);
+            displayTeam();
+        } catch (Exception e) {
+            AlertBox.show("Error", "Error", "Unable to load saved Database");
+            //todo show dialog that asked the user if they find database or create new one
+        }
+    }
+
+
+    /**
+     * this method just shows a new window with basic info about the program
+     * As it contains two links that will be used to open a new web browser window
+     * a copy of main was needed to utilize Application.getHostServices().showDocument()
+     * as this class does not extend Application. Application itself cannot be instanced, and getHostServices
+     * is not a static class, so this was the easiest work around.
+     */
+    public void about() {
+        Stage aboutWindow = new Stage();
+        VBox layout = new VBox();
+        layout.setAlignment(Pos.CENTER);
+        Text aboutText = new Text();
+
+        aboutText.setText("This program was made by Vytautas Ziedelis & Brendan Lyons\n" +
+                "as part of the Data Structures module group project.\n" +
+                "it is a continuation of the solo project by Vytautas Ziedelis\n\n" +
+                "It is made using JavaFX 8 for its graphical user interface\n");
+
+        //Links to both our githubs
+        Hyperlink lyonsGithub = new Hyperlink("Brendan's GitHub Page");
+        Hyperlink ziedelisGithub = new Hyperlink("Vytautas's Github Page");
+
+
+        HBox github = new HBox(40);
+        github.getChildren().addAll(lyonsGithub, ziedelisGithub);
+        Button closeButton = new Button("Close");
+
+
+        layout.getChildren().addAll(aboutText, github, closeButton);
+        aboutWindow.setScene(new Scene(layout));
+        aboutWindow.show();
+
+        lyonsGithub.setOnAction(e -> parent.getHostServices().showDocument("https://github.com/bitlyons"));
+        ziedelisGithub.setOnAction(e -> parent.getHostServices().showDocument("https://github.com/snufas"));
+
+        closeButton.setOnAction(e -> aboutWindow.close());
+
+    }
+
 }
+

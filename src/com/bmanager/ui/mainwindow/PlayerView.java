@@ -167,30 +167,4 @@ public class PlayerView extends Pane {
 
         this.getChildren().addAll(viewLogo, tablePlayers, buttonReturn, optionsMenu, buttonPrev, buttonNext, buttonSearch);
     }
-/** not working as intended yet
-    protected void showTeams(){
-        //Team column
-        columnTeam = new TableColumn<>("Team");
-        columnTeam.setCellValueFactory(new PropertyValueFactory<>("team"));
-        columnTeam.setPrefWidth(81);
-
-        //resize other columns to adjust for this column
-        columnFirstName.setPrefWidth(96);
-        columnLastName.setPrefWidth(97);
-        columnAge.setPrefWidth(79);
-        columnHeight.setPrefWidth(61);
-        columnType.setPrefWidth(87);
-
-        tablePlayers.getColumns().add(columnTeam);
-    } **/
-/**  not working as intended yet
-    protected  void filteredTeam(){
-       //reset to default
-        tablePlayers.getColumns().remove(columnTeam);
-        columnFirstName.setPrefWidth(127);
-        columnLastName.setPrefWidth(127);
-        columnAge.setPrefWidth(70);
-        columnHeight.setPrefWidth(79);
-        columnType.setPrefWidth(105);
-    } **/
 }

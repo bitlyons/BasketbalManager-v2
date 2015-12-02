@@ -2,14 +2,6 @@
 
 //TODOs
 
-1) add new Stage when trying to close the main window that asks the user do they want to save, don't save, cancel
-2) implement search controller/view
-    2a) default to 1 search term but can add more
-    2b) select which filter to add by use of a combo box
-    2c) each added search box removes the currently selected search terms
-
-3) Create About popup --- Possibly related to (1) might need a new stage.
-
 4) do data verification on user input for team
 
 5) do more data verification on player creation
@@ -22,3 +14,4 @@
 
 12) possibly more
 
+Data Verification on entry, Css themes(easiest thing to implement)

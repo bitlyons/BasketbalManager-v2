@@ -40,7 +40,6 @@ public class TeamView extends Pane {
 
     MenuItem save = new MenuItem("Save Database");
     MenuItem loadDatabase = new MenuItem(("Load Database ..."));
-    MenuItem export = new MenuItem("Export To HTML");
     MenuItem saveLocation = new MenuItem("Set Save Location");
 
     MenuItem print = new MenuItem("Print current Team");
@@ -106,7 +105,7 @@ public class TeamView extends Pane {
         menuTheme.getItems().addAll(radioCssLight, radioCssDark);
 
         //Options Button
-        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation, export, menuTheme, print, about);
+        optionsMenu.getItems().addAll(save, loadDatabase, saveLocation,  menuTheme, print, about);
         optionsMenu.setGraphic(viewOptions);
         viewOptions.setFitHeight(20);
         viewOptions.setFitWidth(20);

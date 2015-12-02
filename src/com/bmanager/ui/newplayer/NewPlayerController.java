@@ -6,10 +6,9 @@ import com.bmanager.models.Team;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -77,6 +76,8 @@ public class NewPlayerController {
     private void datePicker(){
         view.dateDOB.setShowWeekNumbers(false);
         view.dateDOB.setPromptText("dd/mm/yyyy");
+        //view.dateDOB.get
+        //view.dateDOB.setDayCellFactory();
         }
 
 
@@ -145,29 +146,39 @@ public class NewPlayerController {
     //TODO do data check for valid data also
     private String validateUserInput()
     {
+        //the player must be 45 or under (the oldest ever professional player)
+        LocalDate today = LocalDate.now();
+        LocalDate intDate = LocalDate.parse(today.getYear()-45+"-01-01");
+        LocalDate endDate = LocalDate.parse(today.getYear()-5+"-01-01");
+
         if (view.textFirstName.getText().trim().isEmpty())
             return "First name cannot be left blank";
 
         if (view.textLastName.getText().trim().isEmpty())
             return "Last name cannot be left blank.";
 
-        //TODO REWRITE to check date
-        //if (view.textDOB.getText().trim().isEmpty())
-          //  return "Age cannot be left blank";
+        //Check if date of birth, make sure the player is under 45 and above 5(in case its used for a kids league)
+        if (view.dateDOB.getValue().toString().trim().isEmpty())
+            return "DOB cannot be left blank";
+        if(view.dateDOB.getValue().isBefore(intDate))
+        return "DOB cannot be before " + (today.getYear()-45);
+
+        if(view.dateDOB.getValue().isAfter(endDate))
+            return "DOB cannot be before " + (today.getYear()-5);
 
         if (view.textHeight.getText().trim().isEmpty())
             return "Height cannot be left blank";
+
+        //height must be above 4 feet, but below 9 feet.
+        if (Double.parseDouble(view.textHeight.getText()) <1.2 || Double.parseDouble(view.textHeight.getText())>2.7)
+            return "Height value is unacceptable";
+
 
         if (view.comboPlayerType.getSelectionModel().getSelectedIndex() == -1)
             return "Player's type has not been set!";
 
         if (view.comboTeams.getSelectionModel().getSelectedIndex() == -1)
             return "Player has not been assigned to a team!";
-
-        //todo re write to check date of birth
-        //Using regex to check if the age entered is a valid integer
-        //if (! Pattern.matches("\\d+", txtAge.getText()))
-          //  return "Age is not a valid integer";
 
         //Using regex to check if height entered is a valid double
         if (! Pattern.matches("\\d+(\\.\\d+)?", view.textHeight.getText()))
