@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,18 +17,20 @@ import java.util.stream.Collectors;
 public class NewTeamController {
     public Stage window;
     private Random rand = new Random();
-    private boolean isEdit = false , userQuit = false;
+    private boolean isEdit = false, userQuit = false;
     private ArrayList<Team> teamDB;
     private String title = "Add New Team";
     private Team workingTeam;
     NewTeamView view = new NewTeamView();
 
-    /** constructor **/
-    public NewTeamController(ArrayList<Team> teamDB){
+    /**
+     * constructor
+     **/
+    public NewTeamController(ArrayList<Team> teamDB) {
         this.teamDB = teamDB;
         setupWindow();
         initializeButtons();
-        if(!isEdit) view.textTeamId.setText(Integer.toString(generateTeamID()));
+        if (!isEdit) view.textTeamId.setText(Integer.toString(generateTeamID()));
 
         window.setOnCloseRequest(e -> {
             e.consume();
@@ -37,11 +40,12 @@ public class NewTeamController {
     }
 
 
-
-    /** this method controls all  the buttons **/
+    /**
+     * this method controls all  the buttons
+     **/
     private void initializeButtons() {
         //Button to pick the image file on the filesystem for the logo
-        view.buttonLogoURL.setOnAction(e->{
+        view.buttonLogoURL.setOnAction(e -> {
             FileChooser urlPicker = new FileChooser();
             urlPicker.setTitle("Pick Team Logo");
 
@@ -51,24 +55,23 @@ public class NewTeamController {
             urlPicker.getExtensionFilters().add(filterPNG);
             urlPicker.setInitialDirectory(new File("./TeamIcons/"));
             //Pick the file
-            try{
-            File url = urlPicker.showOpenDialog(null);
-            view.textTeamLogo.setText(url.getCanonicalPath());}
-            catch (Exception f){
+            try {
+                File url = urlPicker.showOpenDialog(null);
+                view.textTeamLogo.setText(url.getCanonicalPath());
+            } catch (Exception f) {
                 //TODO do something here
                 System.out.println("No file chosen");
                 //AlertBox.show("Error", "No File Chosen", "You did not pick a file");
             }
         });
 
-        view.buttonSubmit.setOnAction(e->addTeam());
+        view.buttonSubmit.setOnAction(e -> addTeam());
 
-        view.buttonCancel.setOnAction(e->{
+        view.buttonCancel.setOnAction(e -> {
             userQuit = true;
             window.close();
         });
     }
-
 
 
     //TODO Add checks here, if all is valid, add to database, for now no checks are done;
@@ -82,25 +85,31 @@ public class NewTeamController {
         String teamName = view.textTeamName.getText();
         String teamCity = view.textTeamCity.getText();
         String teamLogo = view.textTeamLogo.getText();
-        //TODO add checks here on info to make sure they meet the requirements . url should be ether a http://, https:// , file  or /
         Boolean nameExists = nameExists(teamName);
         Team newTeam = new Team(teamID, teamName, teamCity, teamLogo);
         if (nameExists || isEdit) {
-            this.workingTeam = newTeam;
-            window.close();
-        }
-        else AlertBox.show("Error", "Name Already exists in database", "Please enter another name");
+            if (!teamName.isEmpty()) {
+                if (!teamCity.isEmpty()) {
+                    if (teamLogo.toLowerCase().endsWith("png") || teamLogo.toLowerCase().endsWith("bmp") || teamLogo.toLowerCase().endsWith("jpg")) {
+                        this.workingTeam = newTeam;
+                        window.close();
+                    } else AlertBox.show("Error", "No sufficient image entered", "Images must be a png/bmp/jpg");
+                } else AlertBox.show("Error", "Team City cannot be empty", "Please enter the teams City");
+            } else AlertBox.show("Error", "Name cannot be empty", "Please enter a team name");
+        } else AlertBox.show("Error", "Name Already exists in database", "Please enter another name");
     }
 
-    public Team getTeam(){
+    public Team getTeam() {
         return workingTeam;
     }
-    /**This method is used to edit a team, it works by pulling in the selected team, and the index where it is in the
+
+    /**
+     * This method is used to edit a team, it works by pulling in the selected team, and the index where it is in the
      * Array List, then setting each field to the values of the player we pulled in. CheckTeam is still used for adding
      * the team to the database
      */
 
-    public void editTeam(Team editTeam){
+    public void editTeam(Team editTeam) {
         isEdit = true;
         //get all the values from the team we are editing.
         int teamId = editTeam.getTeamId();
@@ -117,8 +126,7 @@ public class NewTeamController {
     }
 
 
-
-    private int generateTeamID(){
+    private int generateTeamID() {
         if (teamDB == null || teamDB.size() == 0) {
             return rand.nextInt(100);
         } else {
@@ -126,12 +134,12 @@ public class NewTeamController {
             //Extracts the team Id from each team object in the array
             List<Integer> userIds = teamDB.stream().map(Team::getTeamId).collect(Collectors.toList());
 
-          int uniqueId;
+            int uniqueId;
 
             //Keeps looping until a unique Id is generated
             do {
                 uniqueId = rand.nextInt(100);
-            } while (! existsIn(uniqueId, userIds));
+            } while (!existsIn(uniqueId, userIds));
 
             return uniqueId;
         }
@@ -145,7 +153,7 @@ public class NewTeamController {
         return true;
     }
 
-    private boolean nameExists(String name){
+    private boolean nameExists(String name) {
         List<String> teamName = new ArrayList<>();
         teamDB.forEach(team -> {
             if (team.getTeamName().equalsIgnoreCase(name)) teamName.add(team.getTeamName());
@@ -154,7 +162,7 @@ public class NewTeamController {
         return teamName.isEmpty();
     }
 
-    private void setupWindow(){
+    private void setupWindow() {
         window = new Stage();
         Scene scene = new Scene(view);
         window.setTitle(title);
@@ -164,7 +172,7 @@ public class NewTeamController {
         window.setResizable(false);
     }
 
-    public boolean userExited(){
+    public boolean userExited() {
         return this.userQuit;
     }
 }

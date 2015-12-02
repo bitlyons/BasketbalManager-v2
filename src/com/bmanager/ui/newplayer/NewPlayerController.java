@@ -169,8 +169,8 @@ public class NewPlayerController {
         if (view.textHeight.getText().trim().isEmpty())
             return "Height cannot be left blank";
 
-        //height must be above 4 feet, but below 9 feet.
-        if (Double.parseDouble(view.textHeight.getText()) <1.2 || Double.parseDouble(view.textHeight.getText())>2.7)
+        //height must be above 5 feet, but below 9 feet.
+        if (Double.parseDouble(view.textHeight.getText()) <1.5 || Double.parseDouble(view.textHeight.getText())>2.7)
             return "Height value is unacceptable";
 
 
@@ -246,7 +246,6 @@ public class NewPlayerController {
                 return false;
         return true;
     }
-
 
 
     public boolean userExited(){

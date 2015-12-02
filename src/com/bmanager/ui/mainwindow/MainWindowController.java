@@ -41,20 +41,27 @@ public class MainWindowController {
     // ArrayLists to store teams and players
     private ArrayList<Team> teamDB = new ArrayList<>();
     private ArrayList<Player> playerDB = new ArrayList<>();
+
     // Observable Lists that will be used for the tableViews backed by the arrayLists above
     private ObservableList<Team> observableTeam = FXCollections.observableList(teamDB);
     private ObservableList<Player> observablePlayers = FXCollections.observableList(playerDB);
+
     //filtered list for player view
     private FilteredList<Player> filteredPlayers = new FilteredList<>(observablePlayers, p -> true);
+
     // These objects will be used to store the current selected player or team for editing
     private Team selectedTeam;
     private Player selectedPlayer;
+
     // These will be used to store the layout of both views
     private TeamView teamView = new TeamView();
     private PlayerView playerView = new PlayerView();
+
     // store the index of selected team and player, default to -999 till we select something
     private int teamIndex = -999, playerIndex = -999, currentTeamId;
-    private String saveLocation;
+
+    private String saveLocation, cssTheme = "Light";
+
     //Main Stage
     private Stage window;
 
@@ -207,29 +214,25 @@ public class MainWindowController {
         teamView.loadDatabase.setOnAction(e -> loadDatabase());
 
 
-        playerView.print.setOnAction(e -> print());
-        teamView.print.setOnAction(e -> print());
+        //playerView.print.setOnAction(e -> print());
+        //teamView.print.setOnAction(e -> print());
 
         playerView.about.setOnAction(e -> about());
         teamView.about.setOnAction(e -> about());
 
         ToggleGroup toggleCss = new ToggleGroup();
 
-        playerView.radioCssLight.setOnAction(e -> {
-        });
-        teamView.radioCssLight.setOnAction(e -> {
-        });
+        //playerView.radioCssLight.setOnAction(e -> cssSetLight());
+        //teamView.radioCssLight.setOnAction(e -> cssSetLight());
 
-        playerView.radioCssDark.setOnAction(e -> {
-        });
-        teamView.radioCssDark.setOnAction(e -> {
-        });
+        //playerView.radioCssDark.setOnAction(e -> cssSetDark());
+        //teamView.radioCssDark.setOnAction(e -> cssSetDark());
 
-        playerView.radioCssLight.setToggleGroup(toggleCss);
-        playerView.radioCssDark.setToggleGroup(toggleCss);
+        //playerView.radioCssLight.setToggleGroup(toggleCss);
+        //playerView.radioCssDark.setToggleGroup(toggleCss);
 
-        teamView.radioCssLight.setToggleGroup(toggleCss);
-        teamView.radioCssDark.setToggleGroup(toggleCss);
+        //teamView.radioCssLight.setToggleGroup(toggleCss);
+        //teamView.radioCssDark.setToggleGroup(toggleCss);
 
     }
 
@@ -483,18 +486,18 @@ public class MainWindowController {
             String searchOption = search.getSearchOption();
             String searchValue = search.getSearchValue();
 
-            switch (searchOption){
+            switch (searchOption) {
                 case "First Name":
-                    filteredPlayers.setPredicate(p-> p.getFirstName().toLowerCase().contains(searchValue));
+                    filteredPlayers.setPredicate(p -> p.getFirstName().toLowerCase().contains(searchValue));
                     break;
-                case "Last Name" :
-                    filteredPlayers.setPredicate(p-> p.getLastName().toLowerCase().contains(searchValue));
+                case "Last Name":
+                    filteredPlayers.setPredicate(p -> p.getLastName().toLowerCase().contains(searchValue));
                     break;
                 case "Age":
-                    filteredPlayers.setPredicate(p-> p.getAge() == Long.parseLong(searchValue));
+                    filteredPlayers.setPredicate(p -> p.getAge() == Long.parseLong(searchValue));
                     break;
                 case "Height":
-                    filteredPlayers.setPredicate(p-> p.getHeight() == Double.parseDouble(searchValue));
+                    filteredPlayers.setPredicate(p -> p.getHeight() == Double.parseDouble(searchValue));
                     break;
             }
 
@@ -596,8 +599,15 @@ public class MainWindowController {
         aboutWindow.setScene(new Scene(layout));
         aboutWindow.show();
 
-        lyonsGithub.setOnAction(e -> parent.getHostServices().showDocument("https://github.com/bitlyons"));
-        ziedelisGithub.setOnAction(e -> parent.getHostServices().showDocument("https://github.com/snufas"));
+        //getHostServices() hardcode the web browsers that each operating system can have, if a linux user does not have firefox
+        //it will result in an error, so we are just disabling it for now.
+        lyonsGithub.setOnAction(e -> {
+            if(System.getProperty("os.name").startsWith("linux")) parent.getHostServices().showDocument("https://github.com/bitlyons");
+
+        });
+        ziedelisGithub.setOnAction(e ->{
+            if(System.getProperty("os.name").startsWith("linux"))parent.getHostServices().showDocument("https://github.com/snufas");
+        });
 
         closeButton.setOnAction(e -> aboutWindow.close());
 
