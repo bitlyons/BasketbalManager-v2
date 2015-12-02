@@ -102,6 +102,7 @@ public class MainWindowController {
         teamViewActive = true;
         window.setScene(teamScene);
         teamView.tableTeams.setItems(observableTeam);
+        teamView.setStyle("-fx-font-size: 11;");
         window.setTitle("Basketball Manager : Team View");
         window.sizeToScene();
         window.setResizable(false);
@@ -117,6 +118,8 @@ public class MainWindowController {
         teamViewActive = false;
         window.setScene(playerScene);
         playerView.tablePlayers.setItems(observablePlayers);
+        playerView.setStyle("-fx-font-size: 11;");
+        playerView.buttonReturn.setStyle("-fx-font-size: 10;");
         window.setTitle("Basketball Manager : All Players View");
         window.show();
         //This checks the ages of the players are all correct
