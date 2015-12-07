@@ -1,6 +1,5 @@
 package com.bmanager.ui.search;
 
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 
@@ -23,8 +22,6 @@ public class SearchView extends GridPane{
     //HBox for buttons
     HBox buttonsAdd = new HBox(20);
     HBox buttonsSub = new HBox(20);
-
-    Node top;
 
     public SearchView(){
         sceneLayout();

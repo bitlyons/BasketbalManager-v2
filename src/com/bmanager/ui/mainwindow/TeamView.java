@@ -113,7 +113,6 @@ public class TeamView extends Pane {
         optionsMenu.setTooltip(new Tooltip("Settings Menu"));
 
 
-
         //Search Button
         buttonSearch.setGraphic(viewSearch);
         viewSearch.setFitHeight(20);

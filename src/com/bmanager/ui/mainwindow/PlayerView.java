@@ -58,9 +58,6 @@ public class PlayerView extends Pane {
     MenuItem about = new MenuItem("About");
     Menu menuTheme = new Menu("Theme");
 
-    //css radio buttons
-    RadioMenuItem radioCssLight = new RadioMenuItem("Light Theme");
-    RadioMenuItem radioCssDark = new RadioMenuItem("Dark Theme");
 
     //Buttons
     Button buttonReturn = new Button("Return to Teams");
@@ -135,8 +132,6 @@ public class PlayerView extends Pane {
         buttonReturn.setPrefWidth(107);
         buttonReturn.setPrefHeight(35);
 
-        //Css menu
-        menuTheme.getItems().addAll(radioCssLight, radioCssDark);
 
         //options
         optionsMenu.getItems().addAll(save, loadDatabase, saveLocation, export, about);// menuTheme, print,

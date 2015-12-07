@@ -209,6 +209,8 @@ public class NewPlayerController {
         return teamName.get(0);
     }
 
+
+    /** used to create the scene **/
     private void setupWindow(){
 
         Scene scene = new Scene(view);
@@ -220,6 +222,8 @@ public class NewPlayerController {
         window.setOnCloseRequest(e -> userQuit = true);
     }
 
+
+    /** generates a unique playerid **/
     private int generatePlayerID(){
         if (playerDB == null || playerDB.size() == 0) {
             return rand.nextInt(10000);
@@ -239,7 +243,7 @@ public class NewPlayerController {
         }
     }
 
-
+/** checks that the generated userid is not already in the database */
     private boolean existsIn(int generatedId, List<Integer> userIds) {
         for (int id : userIds)
             if (generatedId == id)
@@ -247,10 +251,12 @@ public class NewPlayerController {
         return true;
     }
 
-
+    /** this is used to make sure the user did not close the window */
     public boolean userExited(){
         return this.userQuit;
     }
+
+    /** since the user did not close the window , this method get called to return the player */
     public Player getPlayer(){
         return workingPlayer;
     }

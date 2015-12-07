@@ -14,13 +14,12 @@ public class Main extends Application {
         //adds an icon for the window
         primaryStage.getIcons().add(new Image("com/bmanager/resources/logo.png"));
 
-       @SuppressWarnings("unused")
+       @SuppressWarnings("unused") //stops the compiler from complaining that controller is never used,
        MainWindowController controller = new MainWindowController(primaryStage, this);
-
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
-/// end of class
+

@@ -3,6 +3,8 @@ package com.bmanager.data_access;
 
 import com.bmanager.models.Player;
 import com.bmanager.models.Team;
+import com.sun.org.apache.xalan.internal.xsltc.dom.EmptyFilter;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -103,6 +105,8 @@ public class FileHandling {
     /**
      * Reads a file  and creates a list that will be used to save the settings
      * @throws Exception
+     * originally we were going to implement a css switcher, but ran out of time before it was implanted,
+     * the seating's file still contains a reference to it, but is never saved in the program.
      */
     public static List<String> loadSettings() throws Exception {
 

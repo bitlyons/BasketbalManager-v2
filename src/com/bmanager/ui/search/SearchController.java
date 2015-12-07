@@ -15,14 +15,15 @@ public class SearchController {
     private boolean exited = false;
     private String searchValue, searchTerm;
 
+    //constrictor
     public SearchController() {
         setupWindow();
         setupCombo();
         initializeButtons();
-
         window.setOnCloseRequest(e -> exited = true);
     }
 
+    //add listeners to the buttons
     private void initializeButtons() {
         view.buttonSubmit.setOnAction(e -> submit());
         view.buttonCancel.setOnAction(e-> {
@@ -32,6 +33,7 @@ public class SearchController {
     }
 
 
+    //creates the wuindow for the search stage.
     private void setupWindow() {
 
         Scene scene = new Scene(view, 300, 100);
@@ -41,12 +43,14 @@ public class SearchController {
         window.initModality(Modality.APPLICATION_MODAL); //stop user from interacting with other windows
     }
 
+    //populates the combo box
     private void setupCombo(){
         view.searchTerm.getItems().addAll("First Name", "Last Name", "Age", "Height");
         view.searchTerm.setValue(view.searchTerm.getItems().get(0));
     }
 
 
+    //when the user presses submit this method is run
     private void submit() {
         searchValue = view.textSearchTerm.getText();
         searchTerm = view.searchTerm.getValue().toString();

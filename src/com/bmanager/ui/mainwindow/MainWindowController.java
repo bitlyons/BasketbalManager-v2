@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Pos;
-import javafx.print.PrinterJob;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -33,6 +32,10 @@ import java.util.Optional;
 
 import static com.bmanager.data_access.FileHandling.loadSettings;
 
+/**
+ * This class controls the main window. it works by having two different scenes, teamScene and playerScene
+ * This is also where the ArrayLists containing the both the team and players is stored.
+ **/
 
 public class MainWindowController {
 
@@ -60,7 +63,7 @@ public class MainWindowController {
     // store the index of selected team and player, default to -999 till we select something
     private int teamIndex = -999, playerIndex = -999, currentTeamId;
 
-    private String saveLocation, cssTheme = "Light";
+    private String saveLocation;
 
     //Main Stage
     private Stage window;
@@ -73,6 +76,7 @@ public class MainWindowController {
 
     /**
      * constructor , when its first called it will setup the window to show team
+     * we pass it a copy of main so that we can utilize Application.getHostServices().showDocument()
      **/
     public MainWindowController(Stage window, Main parent) {
         this.window = window;
@@ -102,7 +106,6 @@ public class MainWindowController {
         teamViewActive = true;
         window.setScene(teamScene);
         teamView.tableTeams.setItems(observableTeam);
-        teamView.setStyle("-fx-font-size: 11;");
         window.setTitle("Basketball Manager : Team View");
         window.sizeToScene();
         window.setResizable(false);
@@ -118,8 +121,6 @@ public class MainWindowController {
         teamViewActive = false;
         window.setScene(playerScene);
         playerView.tablePlayers.setItems(observablePlayers);
-        playerView.setStyle("-fx-font-size: 11;");
-        playerView.buttonReturn.setStyle("-fx-font-size: 10;");
         window.setTitle("Basketball Manager : All Players View");
         window.show();
         //This checks the ages of the players are all correct
@@ -162,6 +163,9 @@ public class MainWindowController {
         });
     }
 
+    /**
+     * This method adds listeners to all the buttons on both views
+     **/
     private void initializeButtons() {
         teamView.buttonTeams.setOnAction(e -> displayPlayer());
 
@@ -216,26 +220,9 @@ public class MainWindowController {
         playerView.loadDatabase.setOnAction(e -> loadDatabase());
         teamView.loadDatabase.setOnAction(e -> loadDatabase());
 
-
-        //playerView.print.setOnAction(e -> print());
-        //teamView.print.setOnAction(e -> print());
-
+        //about
         playerView.about.setOnAction(e -> about());
         teamView.about.setOnAction(e -> about());
-
-        ToggleGroup toggleCss = new ToggleGroup();
-
-        //playerView.radioCssLight.setOnAction(e -> cssSetLight());
-        //teamView.radioCssLight.setOnAction(e -> cssSetLight());
-
-        //playerView.radioCssDark.setOnAction(e -> cssSetDark());
-        //teamView.radioCssDark.setOnAction(e -> cssSetDark());
-
-        //playerView.radioCssLight.setToggleGroup(toggleCss);
-        //playerView.radioCssDark.setToggleGroup(toggleCss);
-
-        //teamView.radioCssLight.setToggleGroup(toggleCss);
-        //teamView.radioCssDark.setToggleGroup(toggleCss);
 
     }
 
@@ -316,15 +303,28 @@ public class MainWindowController {
     /**
      * this method just deletes the currently selected team or player
      **/
-    //Todo add a confirmation dialog
     private void deleteSelectedX() {
-        if (teamViewActive) observableTeam.remove(teamView.tableTeams.getSelectionModel().getSelectedItem());
-        else observablePlayers.remove(getPlayerIndex(selectedPlayer.getId()));
+        String title;
+        if (teamViewActive) title = "Team";
+        else title = "Player";
+
+        Alert warning = new Alert(Alert.AlertType.CONFIRMATION);
+        warning.setTitle("Delete " + title + "?");
+        warning.setContentText("Are you sure you want to delete this " + title);
+
+        Optional<ButtonType> result = warning.showAndWait();
+        //if the user says yes, delete it otherwise close this dialog window.
+        if (result.get() == ButtonType.OK) {
+            if (teamViewActive) observableTeam.remove(teamView.tableTeams.getSelectionModel().getSelectedItem());
+            else observablePlayers.remove(getPlayerIndex(selectedPlayer.getId()));
+        } else {
+            warning.close();
+        }
     }
 
 
     /**
-     * These methods control the next and previous buttons on the player view
+     * The following two methods control the next and previous buttons on the player view
      **/
 
     private void nextTeamId() {
@@ -389,6 +389,9 @@ public class MainWindowController {
     }
 
 
+    /**
+     * this method exports the current players in the player view to a html document
+     **/
     private void exportToHTML() {
         List<Player> players = filteredPlayers;
         DirectoryChooser outputLocation = new DirectoryChooser();
@@ -406,6 +409,9 @@ public class MainWindowController {
     }
 
 
+    /**
+     * this method lets the user set where to save the database file, it auto sets the file name to database.dat
+     **/
     private void setSaveLocation() {
         DirectoryChooser databaseDir = new DirectoryChooser();
         databaseDir.setTitle("Pick Location To Save The Database");
@@ -418,6 +424,10 @@ public class MainWindowController {
         }
     }
 
+
+    /**
+     * this method lets the user select a .dat file and then trys to load it into the arrays
+     **/
     private void loadDatabase() {
         FileChooser databasePicker = new FileChooser();
         databasePicker.setTitle("Load Database");
@@ -442,13 +452,10 @@ public class MainWindowController {
 
     }
 
-    private void print() {
-        PrinterJob printerJob = PrinterJob.createPrinterJob();
-        if (printerJob.showPrintDialog(window.getOwner()) && printerJob.printPage(playerView.tablePlayers)) ;
-        printerJob.endJob();
-    }
-
-
+    /**
+     * this method does a simple check to see if the default folder for the database exits, if it does not it creates it
+     * this is to avoid a IOException in the case of it not existing when trying to save
+     */
     private void checkIfDefaultFolderExists() {
         File theDir = new File("./database/");
         if (!theDir.exists()) {
@@ -473,6 +480,11 @@ public class MainWindowController {
     }
 
 
+    /**
+     * this method runs the calculateTeamNumbers() method in Team on each team object in the list
+     * We pass it the playerDB so that it can cycle through the playersDB to get the number of players
+     * that are on that team
+     **/
     private void generateTeamNumbers() {
         teamDB.forEach(p -> p.calculateTeamNumbers(playerDB));
         //force table to notice when there is a change to team numbers by removing then re adding the column
@@ -481,6 +493,9 @@ public class MainWindowController {
 
     }
 
+    /**
+     * This method is responsible for the search button
+     **/
     private void search() {
         displayPlayer();
         SearchController search = new SearchController();
@@ -542,6 +557,11 @@ public class MainWindowController {
         }
     }
 
+
+    /**
+     * This method is called when the program is first started, it trys to load the settings file to get the location of
+     * the database, it then proceeds to load the lists into memory
+     */
     private void initialLoad() {
         //load settings first
         try {
@@ -605,11 +625,13 @@ public class MainWindowController {
         //getHostServices() hardcode the web browsers that each operating system can have, if a linux user does not have firefox
         //it will result in an error, so we are just disabling it for now.
         lyonsGithub.setOnAction(e -> {
-            if(System.getProperty("os.name").startsWith("linux")) parent.getHostServices().showDocument("https://github.com/bitlyons");
-
+            if (!System.getProperty("os.name").startsWith("linux"))
+                parent.getHostServices().showDocument("https://github.com/bitlyons");
         });
-        ziedelisGithub.setOnAction(e ->{
-            if(System.getProperty("os.name").startsWith("linux"))parent.getHostServices().showDocument("https://github.com/snufas");
+
+        ziedelisGithub.setOnAction(e -> {
+            if (!System.getProperty("os.name").startsWith("linux"))
+                parent.getHostServices().showDocument("https://github.com/snufas");
         });
 
         closeButton.setOnAction(e -> aboutWindow.close());

@@ -59,13 +59,12 @@ public class NewTeamController {
                 File url = urlPicker.showOpenDialog(null);
                 view.textTeamLogo.setText(url.getCanonicalPath());
             } catch (Exception f) {
-                //TODO do something here
                 System.out.println("No file chosen");
                 //AlertBox.show("Error", "No File Chosen", "You did not pick a file");
             }
         });
 
-        view.buttonSubmit.setOnAction(e -> addTeam());
+        view.buttonSubmit.setOnAction(e -> createTeam());
 
         view.buttonCancel.setOnAction(e -> {
             userQuit = true;
@@ -74,8 +73,8 @@ public class NewTeamController {
     }
 
 
-    //TODO Add checks here, if all is valid, add to database, for now no checks are done;
-    private void addTeam() {
+    /** method that creates the team **/
+    private void createTeam() {
         int teamID;
         try {
             teamID = Integer.parseInt(view.textTeamId.getText());
@@ -126,6 +125,7 @@ public class NewTeamController {
     }
 
 
+    //Generates a unique team id
     private int generateTeamID() {
         if (teamDB == null || teamDB.size() == 0) {
             return rand.nextInt(100);
@@ -145,7 +145,7 @@ public class NewTeamController {
         }
     }
 
-
+    //makes sure the team id is not already i the database
     private boolean existsIn(int generatedId, List<Integer> userIds) {
         for (int id : userIds)
             if (generatedId == id)
@@ -153,6 +153,8 @@ public class NewTeamController {
         return true;
     }
 
+
+    // makes sure the team name is not already in the database, it does not work if the team name is a different spelling of an existing team name
     private boolean nameExists(String name) {
         List<String> teamName = new ArrayList<>();
         teamDB.forEach(team -> {
@@ -162,6 +164,7 @@ public class NewTeamController {
         return teamName.isEmpty();
     }
 
+    /**used to setup the window **/
     private void setupWindow() {
         window = new Stage();
         Scene scene = new Scene(view);
@@ -172,6 +175,7 @@ public class NewTeamController {
         window.setResizable(false);
     }
 
+    //used when checking if the user exited the window before saving.
     public boolean userExited() {
         return this.userQuit;
     }
